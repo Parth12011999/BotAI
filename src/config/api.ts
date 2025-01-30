@@ -1,9 +1,49 @@
+import axios, { InternalAxiosRequestConfig } from 'axios'
+
+// Create base API configuration
 export const API_CONFIG = {
   baseURL: import.meta.env.VITE_API_URL,
-  // You can add more API related configuration here
   endpoints: {
     signup: '/user/signup',
     login: '/user/login',
-    // Add more endpoints as needed
+    logout: '/user/logout',
   }
-}; 
+} as const;
+
+// Create axios instance
+export const api = axios.create({
+  baseURL: API_CONFIG.baseURL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+})
+
+// Add request interceptor to add auth token
+api.interceptors.request.use(
+  (config: InternalAxiosRequestConfig) => {
+    const token = localStorage.getItem('auth-storage')
+    if (token) {
+      const parsedToken = JSON.parse(token)
+      if (parsedToken?.state?.user?.sessionId) {
+        config.headers.Authorization = `Bearer ${parsedToken.state.user.sessionId}`
+      }
+    }
+    return config
+  },
+  (error) => {
+    return Promise.reject(error)
+  }
+)
+
+// Add response interceptor to handle auth errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Clear auth storage and redirect to login
+      localStorage.removeItem('auth-storage')
+      window.location.href = '/login'
+    }
+    return Promise.reject(error)
+  }
+) 

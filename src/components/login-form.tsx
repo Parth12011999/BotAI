@@ -6,79 +6,95 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { Link } from "react-router-dom"
+import { useLogin } from "@/hooks/useLogin"
+import { LoginRequest } from "@/types/auth"
+import { Loader2 } from "lucide-react"
 
 const loginSchema = z.object({
-  email: z.string().email("Please enter a valid email"),
+  user_name: z.string().min(1, "Username is required"),
   password: z.string().min(1, "Password is required"),
 })
-
-type LoginFormValues = z.infer<typeof loginSchema>
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"form">) {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormValues>({
+  const { mutate: login, isPending } = useLogin()
+  
+  const form = useForm<LoginRequest>({
     resolver: zodResolver(loginSchema),
+    defaultValues: {
+      user_name: '',
+      password: '',
+    },
   })
 
-  const onSubmit = (data: LoginFormValues) => {
-    console.log(data)
-    // Handle login logic here
+  const onSubmit = (data: LoginRequest) => {
+    login(data)
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className={cn("flex flex-col gap-6", className)} {...props}>
+    <form onSubmit={form.handleSubmit(onSubmit)} className={cn("flex flex-col gap-6", className)} {...props}>
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Login to your account</h1>
         <p className="text-balance text-sm text-muted-foreground">
-          Enter your email below to login to your account
+          Enter your username below to login to your account
         </p>
       </div>
-      <div className="grid gap-6">
+      <div className="grid gap-4">
         <div className="grid gap-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="user_name">Username</Label>
           <Input
-            id="email"
-            type="email"
-            {...register("email")}
-            placeholder="m@example.com"
+            id="user_name"
+            {...form.register("user_name")}
+            placeholder="johndoe"
           />
-          {errors.email && (
-            <p className="text-sm text-red-500">{errors.email.message}</p>
+          {form.formState.errors.user_name && (
+            <p className="text-sm text-red-500">{form.formState.errors.user_name.message}</p>
           )}
         </div>
         <div className="grid gap-2">
           <div className="flex items-center">
             <Label htmlFor="password">Password</Label>
-            <a
-              href="#"
-              className="ml-auto text-sm underline-offset-4 hover:underline"
+            <Link
+              to="/forgot-password"
+              className="ml-auto text-sm underline underline-offset-4 hover:text-primary"
             >
               Forgot your password?
-            </a>
+            </Link>
           </div>
           <Input
             id="password"
             type="password"
-            {...register("password")}
+            {...form.register("password")}
           />
-          {errors.password && (
-            <p className="text-sm text-red-500">{errors.password.message}</p>
+          {form.formState.errors.password && (
+            <p className="text-sm text-red-500">{form.formState.errors.password.message}</p>
           )}
         </div>
-        <Button type="submit" className="w-full">
-          Login
+
+        <Button type="submit" disabled={isPending} className="w-full">
+          {isPending ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Logging in...
+            </>
+          ) : (
+            'Login'
+          )}
         </Button>
-        <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-          <span className="relative z-10 bg-background px-2 text-muted-foreground">
-            Or continue with
-          </span>
+
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
+          </div>
+          <div className="relative flex justify-center text-xs capitalize">
+            <span className="bg-background px-2 text-muted-foreground">
+              Or continue with
+            </span>
+          </div>
         </div>
+
         <Button variant="outline" className="w-full">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path

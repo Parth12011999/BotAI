@@ -12,6 +12,8 @@ dist
 dist-ssr
 *.local
 package-lock.json
+yarn.lock
+pnpm-lock.yaml
 
 # Editor directories and files
 .vscode/*
@@ -27,3 +29,6 @@ package-lock.json
 .env
 .env.local
 .env.*.local
+# Don't ignore package-lock.json
+!package-lock.json
+

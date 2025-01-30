@@ -1,11 +1,14 @@
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useForm } from "react-hook-form"
+import { useSignup } from '@/hooks/useSignup'
+import { cn } from "@/lib/utils"
+import { SignupRequest } from '@/types/auth'
 import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
+import { Loader2 } from "lucide-react"
+import { useForm } from "react-hook-form"
 import { Link } from "react-router-dom"
+import { z } from "zod"
 
 const signupSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -19,27 +22,30 @@ const signupSchema = z.object({
   path: ["confirmPassword"],
 })
 
-type SignupFormValues = z.infer<typeof signupSchema>
 
 export function SignupForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"form">) {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SignupFormValues>({
+  const { mutate: signup, isPending } = useSignup();
+  
+  const form = useForm<SignupRequest>({
     resolver: zodResolver(signupSchema),
-  })
+    defaultValues: {
+      name: '',
+      user_name: '',
+      email: '',
+      password: '',
+      phone: '',
+    },
+  });
 
-  const onSubmit = (data: SignupFormValues) => {
-    console.log(data)
-    // Handle signup logic here
-  }
+  const onSubmit = (data: SignupRequest) => {
+    signup(data);
+  };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className={cn("flex flex-col gap-6", className)} {...props}>
+    <form onSubmit={form.handleSubmit(onSubmit)} className={cn("flex flex-col gap-6", className)} {...props}>
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Create an account</h1>
         <p className="text-balance text-sm text-muted-foreground">
@@ -52,89 +58,98 @@ export function SignupForm({
             <Label htmlFor="name">Full Name</Label>
             <Input
               id="name"
-              {...register("name")}
+              {...form.register("name")}
               placeholder="John Doe"
             />
-            {errors.name && (
-              <p className="text-sm text-red-500">{errors.name.message}</p>
+            {form.formState.errors.name && (
+              <p className="text-sm text-red-500">{form.formState.errors.name.message}</p>
             )}
           </div>
 
-          <div className="grid gap-2">
-            <Label htmlFor="user_name">Username</Label>
-            <Input
-              id="user_name"
-              {...register("user_name")}
-              placeholder="johndoe"
-            />
-            {errors.user_name && (
-              <p className="text-sm text-red-500">{errors.user_name.message}</p>
-            )}
-          </div>
+        <div className="grid gap-2">
+          <Label htmlFor="user_name">Username</Label>
+          <Input
+            id="user_name"
+            {...form.register("user_name")}
+            placeholder="johndoe"
+          />
+          {form.formState.errors.user_name && (
+            <p className="text-sm text-red-500">{form.formState.errors.user_name.message}</p>
+          )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              {...register("email")}
-              placeholder="m@example.com"
-            />
-            {errors.email && (
-              <p className="text-sm text-red-500">{errors.email.message}</p>
-            )}
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="phone">Phone (Optional)</Label>
-            <Input
-              id="phone"
-              type="tel"
-              {...register("phone")}
-              placeholder="+1234567890"
-            />
-            {errors.phone && (
-              <p className="text-sm text-red-500">{errors.phone.message}</p>
-            )}
-          </div>
+        <div className="grid gap-2">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            type="email"
+            {...form.register("email")}
+            placeholder="m@example.com"
+          />
+          {form.formState.errors.email && (
+            <p className="text-sm text-red-500">{form.formState.errors.email.message}</p>
+          )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              {...register("password")}
-            />
-            {errors.password && (
-              <p className="text-sm text-red-500">{errors.password.message}</p>
-            )}
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="confirmPassword">Confirm Password</Label>
-            <Input
-              id="confirmPassword"
-              type="password"
-              {...register("confirmPassword")}
-            />
-            {errors.confirmPassword && (
-              <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>
-            )}
-          </div>
+        <div className="grid gap-2">
+          <Label htmlFor="phone">Phone (Optional)</Label>
+          <Input
+            id="phone"
+            type="tel"
+            {...form.register("phone")}
+            placeholder="+1234567890"
+          />
+          {form.formState.errors.phone && (
+            <p className="text-sm text-red-500">{form.formState.errors.phone.message}</p>
+          )}
         </div>
 
-        <Button type="submit" className="w-full">
-          Sign Up
+        <div className="grid gap-2">
+          <Label htmlFor="password">Password</Label>
+          <Input
+            id="password"
+            type="password"
+            {...form.register("password")}
+          />
+          {form.formState.errors.password && (
+            <p className="text-sm text-red-500">{form.formState.errors.password.message}</p>
+          )}
+        </div>
+
+        <div className="grid gap-2">
+          <Label htmlFor="confirmPassword">Confirm Password</Label>
+          <Input
+            id="confirmPassword"
+            type="password"
+            {...form.register("confirmPassword")}
+          />
+          {form.formState.errors.confirmPassword && (
+            <p className="text-sm text-red-500">{form.formState.errors.confirmPassword.message}</p>
+          )}
+        </div>
+        </div>
+
+
+        <Button type="submit" disabled={isPending} className="w-full">
+          {isPending ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Creating account...
+            </>
+          ) : (
+            'Create account'
+          )}
         </Button>
 
-        <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-          <span className="relative z-10 bg-background px-2 text-muted-foreground">
-            Or continue with
-          </span>
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
+          </div>
+          <div className="relative flex justify-center text-xs capitalize">
+            <span className="bg-background px-2 text-muted-foreground">
+              Or continue with
+            </span>
+          </div>
         </div>
 
         <Button variant="outline" className="w-full">
