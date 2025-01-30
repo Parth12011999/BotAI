@@ -26,3 +26,6 @@ dist-ssr
 .env
 .env.local
 .env.*.local
+
+# Don't ignore package-lock.json
+!package-lock.json
