@@ -1,6 +1,5 @@
 import { BotIcon } from "lucide-react";
-
-import { LoginForm } from "@/components/login-form";
+import { SignupForm } from "@/components/signup-form";
 
 export default function LoginPage() {
   return (
@@ -16,7 +15,7 @@ export default function LoginPage() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-md">
-            <LoginForm />
+            <SignupForm />
           </div>
         </div>
       </div>
