@@ -52,37 +52,39 @@ export function Sidebar() {
   const location = useLocation();
 
   return (
-    <div className="w-64 border-r min-h-[calc(100vh-4rem)] bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="space-y-4 py-4">
-        <div className="px-3 py-2">
-          <div className="space-y-1">
-            {sidebarLinks.map((link) => (
-              <Link
-                key={link.href}
-                to={link.href}
-                className={cn(
-                  "flex items-center rounded-lg px-3 py-2 text-sm transition-colors",
-                  location.pathname === link.href
-                    ? "bg-primary text-primary-foreground"
-                    : "hover:bg-muted group"
-                )}
-              >
-                <link.icon 
+    <aside className="w-64 border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="h-[calc(100vh-4rem)] overflow-y-auto">
+        <div className="space-y-4 py-4">
+          <div className="px-3 py-2">
+            <div className="space-y-1">
+              {sidebarLinks.map((link, index) => (
+                <Link
+                  key={`${link.href}-${index}`}
+                  to={link.href}
                   className={cn(
-                    "mr-2 h-4 w-4",
-                    location.pathname === link.href 
-                      ? "text-primary-foreground" 
-                      : link.color
-                  )} 
-                />
-                <span className="group-hover:translate-x-1 transition-transform">
-                  {link.title}
-                </span>
-              </Link>
-            ))}
+                    "flex items-center rounded-lg px-3 py-2 text-sm transition-colors",
+                    location.pathname === link.href
+                      ? "bg-primary text-primary-foreground"
+                      : "hover:bg-muted group"
+                  )}
+                >
+                  <link.icon 
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      location.pathname === link.href 
+                        ? "text-primary-foreground" 
+                        : link.color
+                    )} 
+                  />
+                  <span className="group-hover:translate-x-1 transition-transform">
+                    {link.title}
+                  </span>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </aside>
   );
 } 

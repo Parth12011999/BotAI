@@ -48,7 +48,7 @@ export function Header() {
     >
       <div className="flex h-16 items-center px-4 lg:px-6">
         <div className="text-2xl font-bold bg-gradient-to-r from-primary to-primary-foreground bg-clip-text text-transparent">
-          Dashboard
+          Bot.AI
         </div>
         <div className="ml-auto flex items-center space-x-4">
           <div className="hidden lg:flex">
