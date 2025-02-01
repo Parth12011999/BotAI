@@ -2,7 +2,6 @@ import { Layout } from "@/components/Layout";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { DashboardOverview } from "@/components/dashboard/DashboardOverview";
 import { Suspense } from "react";
-import { Navigate } from "react-router-dom";
 import LoginPage from "../app/login/page";
 import SignupPage from "../app/signup/page";
 import LandingPage from "@/app/(marketing)/page";
