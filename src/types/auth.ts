@@ -28,6 +28,7 @@ export interface SignupRequest {
   name: string;
   user_name: string;
   password: string;
+  confirmPassword: string;
   email: string;
   phone?: string;
 }
