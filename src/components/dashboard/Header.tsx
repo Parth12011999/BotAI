@@ -20,9 +20,13 @@ export function Header() {
   const navigate = useNavigate()
   const { user, logout } = useAuthStore()
 
+  if (!user) {
+    return null
+  }
+
   const handleLogout = async () => {
     try {
-      await authService.logout()
+      await authService.logout({ user_id: user?.id })
       logout()
       toast.success('Logged out successfully', {
         description: 'Come back soon!',

@@ -6,7 +6,8 @@ import {
   ApiError, 
   LoginRequest, 
   ApiResponse,
-  LoginResponse 
+  LoginResponse, 
+  LogoutRequest
 } from '@/types/auth';
 
 const api = axios.create({
@@ -61,9 +62,9 @@ export const authService = {
     }
   },
 
-  logout: async (): Promise<void> => {
+  logout: async (data: LogoutRequest): Promise<void> => {
     try {
-      await api.post(API_CONFIG.endpoints.logout);
+      await api.post(API_CONFIG.endpoints.logout, data);
     } catch (error) {
       console.error('Logout failed:', error);
       // Still clear local state even if server logout fails

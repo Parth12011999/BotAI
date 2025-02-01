@@ -48,4 +48,13 @@ export interface ApiError {
   status: number;
   message: string;
   details?: Record<string, string[]>;
+}
+
+export interface LogoutRequest {
+  user_id: string;
+}
+
+export interface LogoutResponse {
+  success: boolean;
+  message: string;
 } 
