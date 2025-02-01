@@ -1,14 +1,25 @@
-import { BrowserRouter, useRoutes } from "react-router-dom";
+import { BrowserRouter, useRoutes, Navigate } from "react-router-dom";
 import "./App.css";
 import { ThemeProvider } from "./components/theme-provider";
 import { publicRoutes, protectedRoutes } from "./routes";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/sonner"
-import { AuthGuard } from "./components/auth-guard";
+import { useAuthStore } from "./store/auth.store";
 
 function AppRoutes() {
-  const routes = useRoutes([...publicRoutes, ...protectedRoutes]);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  
+  // Redirect to dashboard if already authenticated and trying to access public routes
+  const routes = useRoutes([
+    ...publicRoutes,
+    ...protectedRoutes,
+    {
+      path: "*",
+      element: isAuthenticated ? <Navigate to="/dashboard" /> : <Navigate to="/" />,
+    },
+  ]);
+  
   return routes;
 }
 
@@ -20,10 +31,6 @@ const queryClient = new QueryClient({
     },
   },
 });
-
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  return <AuthGuard>{children}</AuthGuard>
-}
 
 function App() {
   return (

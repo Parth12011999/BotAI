@@ -5,8 +5,13 @@ import { Suspense } from "react";
 import { Navigate } from "react-router-dom";
 import LoginPage from "../app/login/page";
 import SignupPage from "../app/signup/page";
+import LandingPage from "@/app/(marketing)/page";
 
 export const publicRoutes = [
+  {
+    path: "/",
+    element: <LandingPage />,
+  },
   {
     element: <Layout />,
     children: [
@@ -25,14 +30,6 @@ export const publicRoutes = [
             <SignupPage />
           </Suspense>
         ),
-      },
-      {
-        path: "/",
-        element: <Navigate to="/login" replace />,
-      },
-      {
-        path: "*",
-        element: <Navigate to="/login" replace />,
       },
     ],
   },
