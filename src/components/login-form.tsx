@@ -1,14 +1,14 @@
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { Link } from "react-router-dom"
 import { useLogin } from "@/hooks/useLogin"
+import { cn } from "@/lib/utils"
 import { LoginRequest } from "@/types/auth"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { Loader2 } from "lucide-react"
+import { useForm } from "react-hook-form"
+import { Link } from "react-router-dom"
+import { z } from "zod"
 
 const loginSchema = z.object({
   user_name: z.string().min(1, "Username is required"),
@@ -56,12 +56,12 @@ export function LoginForm({
         <div className="grid gap-2">
           <div className="flex items-center">
             <Label htmlFor="password">Password</Label>
-            <Link
+            {/* <Link
               to="/forgot-password"
               className="ml-auto text-sm underline underline-offset-4 hover:text-primary"
             >
               Forgot your password?
-            </Link>
+            </Link> */}
           </div>
           <Input
             id="password"
@@ -84,7 +84,7 @@ export function LoginForm({
           )}
         </Button>
 
-        <div className="relative">
+        {/* <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t" />
           </div>
@@ -103,7 +103,7 @@ export function LoginForm({
             />
           </svg>
           Login with GitHub
-        </Button>
+        </Button> */}
       </div>
       <div className="text-center text-sm">
         Don&apos;t have an account?{" "}
