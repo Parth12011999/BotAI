@@ -7,6 +7,8 @@ export const API_CONFIG = {
     signup: '/user/signup',
     login: '/user/login',
     logout: '/user/logout',
+    chat: '/chat/question_answer',
+    chatHistory: '/chat/get_chat_history',
   }
 } as const;
 

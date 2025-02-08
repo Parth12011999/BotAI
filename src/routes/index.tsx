@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import LoginPage from "../app/login/page";
 import SignupPage from "../app/signup/page";
 import LandingPage from "@/app/(marketing)/page";
+import { AuthGuard } from "@/components/auth-guard";
 
 export const publicRoutes = [
   {
@@ -39,7 +40,9 @@ export const protectedRoutes = [
   {
     path: "/dashboard",
     element: (
+      <AuthGuard>
         <DashboardLayout />
+      </AuthGuard>
     ),
     children: [
       {
