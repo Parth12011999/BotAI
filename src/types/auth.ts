@@ -43,6 +43,7 @@ export interface SignupResponse {
     name: string;
     email: string;
     user_name: string;
+    token:string,
   };
 }
 

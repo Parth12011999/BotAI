@@ -1,4 +1,4 @@
-import { authService } from '@/services/auth'
+import { auth } from '@/services/auth'
 import { useAuthStore } from '@/store/auth.store'
 import { ApiError, LoginRequest } from '@/types/auth'
 import { useMutation } from '@tanstack/react-query'
@@ -10,7 +10,7 @@ export const useLogin = () => {
   const setUser = useAuthStore((state) => state.setUser)
 
   return useMutation({
-    mutationFn: (data: LoginRequest) => authService.login(data),
+    mutationFn: (data: LoginRequest) => auth.login(data),
     onSuccess: (response) => {
       if (response.success) {
         const { data } = response;

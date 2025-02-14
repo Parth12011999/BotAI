@@ -30,8 +30,6 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    const originalRequest = error.config;
-
     // Handle 401 Unauthorized responses
     if (error.response?.status === 401) {
       // Clear auth state and redirect to login

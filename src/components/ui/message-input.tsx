@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
-import { ArrowUp, Paperclip, Square, X, SendHorizontal } from "lucide-react"
+import { Paperclip, Square, X, SendHorizontal } from "lucide-react"
 import { omit } from "remeda"
 
 import { cn } from "@/lib/utils"
@@ -163,12 +163,8 @@ export function MessageInput({
           close={() => setShowInterruptPrompt(false)}
         />
       )}
-
       <Textarea
-        value={props.value}
-        onChange={(e) => {
-          props.setValue(e.target.value)
-        }}
+        onChange={props.onChange}
         placeholder={placeholder}
         ref={textAreaRef}
         onPaste={onPaste}
