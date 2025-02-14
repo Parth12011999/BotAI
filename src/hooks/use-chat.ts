@@ -1,7 +1,7 @@
-import { useState, useCallback } from "react";
-import { Message, ApiError } from "@/types/chat";
 import { chatService } from "@/services/chat.service";
 import { useAuthStore } from "@/store/auth.store";
+import { ApiError, Message } from "@/types/chat";
+import { useCallback, useState } from "react";
 
 export interface UseChatOptions {
   api?: string;
@@ -15,7 +15,6 @@ export interface UseChatOptions {
 export function useChat({
   initialMessages = [],
   initialInput = "",
-  onResponse,
   onFinish,
   onError,
 }: UseChatOptions = {}) {

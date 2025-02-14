@@ -1,6 +1,7 @@
 import React, { Suspense } from "react"
 import Markdown from "react-markdown"
 import remarkGfm from "remark-gfm"
+import { bundledLanguages } from "shiki"
 
 import { cn } from "@/lib/utils"
 import { CopyButton } from "@/components/ui/copy-button"
@@ -21,59 +22,74 @@ export function MarkdownRenderer({ children }: MarkdownRendererProps) {
   )
 }
 
-interface HighlightedPre extends React.HTMLAttributes<HTMLPreElement> {
+interface HighlightedPreProps extends React.HTMLAttributes<HTMLPreElement> {
   children: string
   language: string
 }
 
-const HighlightedPre = React.memo(
-  async ({ children, language, ...props }: HighlightedPre) => {
-    const { codeToTokens, bundledLanguages } = await import("shiki")
+// Create a separate async function for code highlighting
+async function highlightCode(code: string, language: string) {
+  const { codeToTokens } = await import("shiki")
 
-    if (!(language in bundledLanguages)) {
-      return <pre {...props}>{children}</pre>
-    }
-
-    const { tokens } = await codeToTokens(children, {
-      lang: language as keyof typeof bundledLanguages,
-      defaultColor: false,
-      themes: {
-        light: "github-light",
-        dark: "github-dark",
-      },
-    })
-
-    return (
-      <pre {...props}>
-        <code>
-          {tokens.map((line, lineIndex) => (
-            <>
-              <span key={lineIndex}>
-                {line.map((token, tokenIndex) => {
-                  const style =
-                    typeof token.htmlStyle === "string"
-                      ? undefined
-                      : token.htmlStyle
-
-                  return (
-                    <span
-                      key={tokenIndex}
-                      className="text-shiki-light bg-shiki-light-bg dark:text-shiki-dark dark:bg-shiki-dark-bg"
-                      style={style}
-                    >
-                      {token.content}
-                    </span>
-                  )
-                })}
-              </span>
-              {lineIndex !== tokens.length - 1 && "\n"}
-            </>
-          ))}
-        </code>
-      </pre>
-    )
+  if (!(language in bundledLanguages)) {
+    return null
   }
-)
+
+  const { tokens } = await codeToTokens(code, {
+    lang: language as keyof typeof bundledLanguages,
+    defaultColor: false,
+    themes: {
+      light: "github-light",
+      dark: "github-dark",
+    },
+  })
+
+  return tokens
+}
+
+// Make the component non-async and use useEffect for async operations
+const HighlightedPre = React.memo(({ children, language, ...props }: HighlightedPreProps) => {
+  const [tokens, setTokens] = React.useState<any[] | null>(null)
+
+  React.useEffect(() => {
+    highlightCode(children, language).then(setTokens)
+  }, [children, language])
+
+  if (!tokens) {
+    return <pre {...props}>{children}</pre>
+  }
+
+  return (
+    <pre {...props}>
+      <code>
+        {tokens.map((line, lineIndex) => (
+          <React.Fragment key={lineIndex}>
+            <span>
+              {line.map((token: any, tokenIndex: number) => {
+                const style =
+                  typeof token.htmlStyle === "string"
+                    ? undefined
+                    : token.htmlStyle
+
+                return (
+                  <span
+                    key={tokenIndex}
+                    className="text-shiki-light bg-shiki-light-bg dark:text-shiki-dark dark:bg-shiki-dark-bg"
+                    style={style}
+                  >
+                    {token.content}
+                  </span>
+                )
+              })}
+            </span>
+            {lineIndex !== tokens.length - 1 && "\n"}
+          </React.Fragment>
+        ))}
+      </code>
+    </pre>
+  )
+})
+
 HighlightedPre.displayName = "HighlightedCode"
 
 interface CodeBlockProps extends React.HTMLAttributes<HTMLPreElement> {
@@ -125,7 +141,7 @@ function childrenTakeAllStringContents(element: any): string {
   }
 
   if (element?.props?.children) {
-    let children = element.props.children
+    const children = element.props.children
 
     if (Array.isArray(children)) {
       return children
@@ -187,7 +203,7 @@ const COMPONENTS = {
 }
 
 function withClass(Tag: keyof JSX.IntrinsicElements, classes: string) {
-  const Component = ({ node, ...props }: any) => (
+  const Component = ({  ...props }: any) => (
     <Tag className={classes} {...props} />
   )
   Component.displayName = Tag

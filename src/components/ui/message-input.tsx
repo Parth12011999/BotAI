@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea"
 
 interface MessageInputBaseProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
-  value: string
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
   submitOnEnter?: boolean
   stop?: () => void
   isGenerating: boolean
@@ -40,10 +40,12 @@ export function MessageInput({
   stop,
   isGenerating,
   enableInterrupt = true,
+  onChange,
   ...props
 }: MessageInputProps) {
-  const [isDragging, setIsDragging] = useState(false)
   const [showInterruptPrompt, setShowInterruptPrompt] = useState(false)
+  const [isDraggingFile, setIsDraggingFile] = useState(false)
+  const textAreaRef = useRef<HTMLTextAreaElement | null>(null)
 
   useEffect(() => {
     if (!isGenerating) {
@@ -70,17 +72,17 @@ export function MessageInput({
   const onDragOver = (event: React.DragEvent) => {
     if (props.allowAttachments !== true) return
     event.preventDefault()
-    setIsDragging(true)
+    setIsDraggingFile(true)
   }
 
   const onDragLeave = (event: React.DragEvent) => {
     if (props.allowAttachments !== true) return
     event.preventDefault()
-    setIsDragging(false)
+    setIsDraggingFile(false)
   }
 
   const onDrop = (event: React.DragEvent) => {
-    setIsDragging(false)
+    setIsDraggingFile(false)
     if (props.allowAttachments !== true) return
     event.preventDefault()
     const dataTransfer = event.dataTransfer
@@ -138,8 +140,6 @@ export function MessageInput({
     onKeyDownProp?.(event)
   }
 
-  const textAreaRef = useRef<HTMLTextAreaElement | null>(null)
-
   const showFileList =
     props.allowAttachments && props.files && props.files.length > 0
 
@@ -164,7 +164,7 @@ export function MessageInput({
         />
       )}
       <Textarea
-        onChange={props.onChange}
+        onChange={onChange}
         placeholder={placeholder}
         ref={textAreaRef}
         onPaste={onPaste}
@@ -246,7 +246,7 @@ export function MessageInput({
         )}
       </div>
 
-      {props.allowAttachments && <FileUploadOverlay isDragging={isDragging} />}
+      {props.allowAttachments && <FileUploadOverlay isDragging={isDraggingFile} />}
     </div>
   )
 }
