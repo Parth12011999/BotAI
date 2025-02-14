@@ -6,6 +6,31 @@ import { chatService } from "@/services/chat.service";
 import { useAuthStore } from "@/store/auth.store";
 import { toast } from "sonner";
 
+// Update the type definition to accept a Promise return type and include experimental_attachments
+type OnSubmitHandler = (
+  event?: React.FormEvent<HTMLFormElement>,
+  options?: {
+    user_id: string;
+    session_id: string;
+    question: string;
+    experimental_attachments?: FileList;
+  }
+) => Promise<void>;
+
+// Or alternatively, if you're using this as a prop type:
+interface ChatInterfaceProps {
+  onSubmit: (
+    event?: React.FormEvent<HTMLFormElement>,
+    options?: {
+      user_id: string;
+      session_id: string;
+      question: string;
+      experimental_attachments?: FileList;
+    }
+  ) => Promise<void>;
+  // ... other props
+}
+
 export function ChatInterface() {
   const { user } = useAuthStore();
   const { currentSession, messages: storeMessages, setMessages: setStoreMessages, setIsLoading } = useChatStore();

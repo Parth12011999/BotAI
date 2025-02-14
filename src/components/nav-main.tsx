@@ -15,9 +15,9 @@ import { DeleteBotDialog } from "./chat/delete-bot-dialog";
 import { Button } from "./ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { bot } from "@/services/bot";
-import { botKeys } from "@/components/app-sidebar";
 import { useAuthStore } from "@/store/auth.store";
 import { useState } from "react";
+import { botKeys } from "@/lib/query-keys";
 
 export interface NavMainProps {
   items: {

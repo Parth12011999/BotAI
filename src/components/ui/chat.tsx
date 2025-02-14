@@ -211,7 +211,7 @@ interface ChatFormProps {
 }
 
 export const ChatForm = forwardRef<HTMLFormElement, ChatFormProps>(
-  ({ children, handleSubmit, isPending, className, user, input }, ref) => {
+  ({ children, handleSubmit, className, user, input }, ref) => {
     const [files, setFiles] = useState<File[] | null>(null)
 
     const onSubmit = (event: React.FormEvent) => {
@@ -219,16 +219,16 @@ export const ChatForm = forwardRef<HTMLFormElement, ChatFormProps>(
         handleSubmit(event,{
           question: input,
           experimental_attachments: undefined,
-          user_id: user?.id,
-          session_id: user?.sessionId,
+          user_id: user?.id ?? '',
+          session_id: user?.sessionId ?? '',
         })
         return
       }
 
       const fileList = createFileList(files)
       handleSubmit(event,{
-        user_id: user?.id,
-        session_id: user?.sessionId,
+        user_id: user?.id ?? '',
+        session_id: user?.sessionId ?? '',
         question: input,
         experimental_attachments: fileList,
       })

@@ -23,7 +23,7 @@ import { toast } from "sonner";
 import { bot } from "@/services/bot";
 import { Textarea } from "@/components/ui/textarea";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { botKeys } from "@/components/app-sidebar";
+import { botKeys } from "@/lib/query-keys";
 
 const BOT_CATEGORIES = [
   { id: "education", name: "Education" },

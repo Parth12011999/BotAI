@@ -1,7 +1,7 @@
+import { api } from "@/config/api";
+import { useQuery } from "@tanstack/react-query";
 import { Bot, LifeBuoy, Send } from "lucide-react";
 import * as React from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/config/api";
 import { toast } from "sonner";
 
 import { NavMain } from "@/components/nav-main";
@@ -16,16 +16,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { useAuthStore } from "@/store/auth.store";
 import { Skeleton } from "@/components/ui/skeleton";
-
-// Query keys as constants to avoid typos and enable better TypeScript support
-export const botKeys = {
-  all: ["bots"] as const,
-  lists: () => [...botKeys.all, "list"] as const,
-  list: (userId: string) => [...botKeys.lists(), userId] as const,
-  details: (botId: string) => [...botKeys.all, "detail", botId] as const,
-} as const;
+import { useAuthStore } from "@/store/auth.store";
+import { botKeys } from "@/lib/query-keys";
 
 interface Bot {
   id: number;
@@ -58,22 +51,16 @@ const navSecondary = [
   },
 ] as const;
 
-// Separate API functions for better reusability and testing
 const botApi = {
   list: async (): Promise<BotListResponse> => {
     const response = await api.get("/chat/bot/list");
     return response.data;
   },
-  delete: async (bot_id: string): Promise<void> => {
-    await api.delete(`/chat/bot/${bot_id}`);
-  },
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuthStore();
-  const queryClient = useQueryClient();
 
-  // Query for fetching bot list
   const {
     data: botList,
     isLoading,
@@ -82,8 +69,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     queryKey: botKeys.list(user?.id ?? ""),
     queryFn: () => botApi.list(),
     enabled: !!user,
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    gcTime: 1000 * 60 * 10, // 10 minutes
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 10,
     retry: 2,
     select: (data) => data.data,
     onError: (error: Error) => {
@@ -92,6 +79,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       });
     },
   });
+
+  console.log(botList);
+  
 
 
   const formattedBots = React.useMemo(() => {
