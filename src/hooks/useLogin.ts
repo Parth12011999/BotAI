@@ -1,9 +1,9 @@
-import { useMutation } from '@tanstack/react-query'
 import { authService } from '@/services/auth'
-import { LoginRequest, ApiError } from '@/types/auth'
+import { useAuthStore } from '@/store/auth.store'
+import { ApiError, LoginRequest } from '@/types/auth'
+import { useMutation } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
-import { useAuthStore } from '@/store/auth.store'
 
 export const useLogin = () => {
   const navigate = useNavigate()
@@ -19,6 +19,7 @@ export const useLogin = () => {
           username: data.user_name,
           email: data.user_email,
           sessionId: data.session_id,
+          token: data.token,
         });
         toast.success('Welcome back!', {
           description: data.response || 'You have successfully logged in.',

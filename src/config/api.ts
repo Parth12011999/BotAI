@@ -26,8 +26,8 @@ api.interceptors.request.use(
     const token = localStorage.getItem('auth-storage')
     if (token) {
       const parsedToken = JSON.parse(token)
-      if (parsedToken?.state?.user?.sessionId) {
-        config.headers.Authorization = `Bearer ${parsedToken.state.user.sessionId}`
+      if (parsedToken?.state?.user?.token) {
+        config.headers.Authorization = `Bearer ${parsedToken.state.user.token}`
       }
     }
     return config

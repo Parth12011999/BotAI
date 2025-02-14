@@ -7,6 +7,7 @@ export interface LoginResponse {
   response: string;
   user_id: string;
   session_id: string;
+  token: string;
   user_name: string;
   user_email: string;
 }
@@ -21,6 +22,7 @@ export interface User {
   id: string;
   username: string;
   email: string;
+  token: string;
   sessionId: string;
 }
 
@@ -57,4 +59,4 @@ export interface LogoutRequest {
 export interface LogoutResponse {
   success: boolean;
   message: string;
-} 
+}

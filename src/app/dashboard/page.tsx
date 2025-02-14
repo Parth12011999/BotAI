@@ -1,14 +1,8 @@
-// import { ChatSidebar } from "../chat/chat-sidebar";
-// import { ChatInterface } from "../chat/chat-interface";
-// import { Header } from "./Header";
+import { AppSidebar } from "@/components/app-sidebar"
+import { SiteHeader } from "@/components/site-header"
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 
-import { AppSidebar } from "../app-sidebar";
-import { SiteHeader } from "../site-header";
-import { SidebarInset, SidebarProvider } from "../ui/sidebar";
-
-
-
-export function DashboardLayout() {
+export default function Page() {
   return (
     <div className="[--header-height:calc(theme(spacing.14))]">
       <SidebarProvider className="flex flex-col">
@@ -28,5 +22,5 @@ export function DashboardLayout() {
         </div>
       </SidebarProvider>
     </div>
-  );
+  )
 }

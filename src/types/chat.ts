@@ -40,4 +40,38 @@ export interface ApiError {
   status: number;
   message: string;
   details?: Record<string, string[]>;
+}
+
+export interface Bot {
+  id: number;
+  bot_id: string;
+  user_id: string;
+  name: string;
+  category: string;
+  instruction: string;
+  isactive: number;
+  created_at: string;
+  updated_at: string | null;
+}
+
+export interface BotCreateRequest {
+  bot_name: string;
+  bot_category: string;
+  bot_instruction: string;
+}
+
+export interface BotListResponse {
+  success: boolean;
+  message: string | null;
+  data: Bot[];
+}
+
+export interface BotDeleteResponse {
+  message: string;
+  bot_id: string;
+  user_id: string;
+}
+
+export interface BotDeleteRequest {
+  bot_id: string;
 } 
