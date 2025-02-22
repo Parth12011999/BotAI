@@ -77,12 +77,12 @@ export function CreateBotDialog() {
   const createBotMutation = useMutation({
     mutationFn: (data: CreateBotData) => bot.create(data),
     onSuccess: (response) => {
-      const { bot_id, bot_name, bot_category } = response.data;
+      const { bot_id, name, category } = response.data;
 
       addSession({
         id: bot_id,
-        name: bot_name,
-        bot_type: bot_category,
+        name: name,
+        bot_type: category,
         created_at: new Date().toISOString(),
       });
 

@@ -16,7 +16,7 @@ import { useChatStore } from "@/store/chat.store"
 interface ChatPropsBase {
   handleSubmit: (
     event?: { preventDefault?: () => void },
-    options?: { bot_id: string; session_id: string; question: string }
+    options?: { session_id: string; bot_id: string; question: string, experimental_attachments?: FileList  }
   ) => void
   messages: Array<Message>
   input: string

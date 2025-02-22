@@ -147,6 +147,9 @@ export function NavMain({ items }: NavMainProps) {
                         to={`/chat/${item.bot_id}`} 
                         className="flex-1 text-left"
                         onClick={(e) => e.stopPropagation()}
+                        state={{
+                          botDetails: item
+                        }}
                       >
                         {item.name}
                       </Link>

@@ -5,32 +5,7 @@ import { useChatStore } from "@/store/chat.store";
 import { chatService } from "@/services/chat.service";
 import { useAuthStore } from "@/store/auth.store";
 import { toast } from "sonner";
-import { useParams } from "react-router-dom";
-
-// Update the type definition to accept a Promise return type and include experimental_attachments
-type OnSubmitHandler = (
-  event?: React.FormEvent<HTMLFormElement>,
-  options?: {
-    user_id: string;
-    session_id: string;
-    question: string;
-    experimental_attachments?: FileList;
-  }
-) => Promise<void>;
-
-// Or alternatively, if you're using this as a prop type:
-interface ChatInterfaceProps {
-  onSubmit: (
-    event?: React.FormEvent<HTMLFormElement>,
-    options?: {
-      user_id: string;
-      session_id: string;
-      question: string;
-      experimental_attachments?: FileList;
-    }
-  ) => Promise<void>;
-  // ... other props
-}
+import { useLocation, useParams } from "react-router-dom";
 
 export function ChatInterface() {
   const { user } = useAuthStore();
@@ -42,6 +17,8 @@ export function ChatInterface() {
     setCurrentSession,
   } = useChatStore();
   const { botId } = useParams();
+  const { state } = useLocation();
+  const { botDetails } = state;
 
   const {
     messages,
@@ -66,7 +43,15 @@ export function ChatInterface() {
   });
 
   useEffect(() => {
-    setCurrentSession(botId)
+    if (botDetails) {
+      setCurrentSession({
+        id: botDetails.id,
+        bot_type: "asd",
+        created_at: "asd",
+        name: "hello",
+      });
+    }
+
     const loadChatHistory = async () => {
       if (!user || !botId) return;
 
@@ -95,7 +80,7 @@ export function ChatInterface() {
     };
 
     loadChatHistory();
-  }, [botId, user, setMessages, setStoreMessages, setCurrentSession]);
+  }, [botDetails,botId, user, setMessages, setStoreMessages, setCurrentSession]);
 
   if (!currentSession) {
     return (
