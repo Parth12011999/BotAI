@@ -45,10 +45,10 @@ export function ChatInterface() {
   useEffect(() => {
     if (botDetails) {
       setCurrentSession({
-        id: botDetails.id,
-        bot_type: "asd",
-        created_at: "asd",
-        name: "hello",
+        id: botDetails.bot_id,
+        bot_type: botDetails.category,
+        created_at: botDetails.created_at,
+        name: botDetails.name,
       });
     }
 

@@ -4,7 +4,6 @@ import { ArrowDown, ThumbsDown, ThumbsUp } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useAutoScroll } from "@/hooks/use-auto-scroll"
 import { Button } from "@/components/ui/button"
-import { type Message } from "@/components/ui/chat-message"
 import { CopyButton } from "@/components/ui/copy-button"
 import { MessageInput } from "@/components/ui/message-input"
 import { MessageList } from "@/components/ui/message-list"
@@ -12,6 +11,7 @@ import { PromptSuggestions } from "@/components/ui/prompt-suggestions"
 import { useAuthStore } from "@/store/auth.store"
 import { User } from "@/types/auth"
 import { useChatStore } from "@/store/chat.store"
+import { Message } from "./chat-message"
 
 interface ChatPropsBase {
   handleSubmit: (
