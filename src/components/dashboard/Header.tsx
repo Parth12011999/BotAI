@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuthStore } from "@/store/auth.store"
-import { authService } from "@/services/auth"
+import { auth } from "@/services/auth"
 import { toast } from "sonner"
 import { useNavigate } from "react-router-dom"
 import { Badge } from "@/components/ui/badge"
@@ -26,7 +26,7 @@ export function Header() {
 
   const handleLogout = async () => {
     try {
-      await authService.logout({ user_id: user?.id })
+      await auth.logout({ user_id: user.id })
       logout()
       toast.success('Logged out successfully', {
         description: 'Come back soon!',

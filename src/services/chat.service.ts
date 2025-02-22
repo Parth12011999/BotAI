@@ -38,7 +38,7 @@ export const chatService = {
         API_CONFIG.endpoints.chatHistory,
         data
       );
-      return response.data;
+      return response.data || [];
     } catch (error) {
       if (error instanceof AxiosError) {
         throw {

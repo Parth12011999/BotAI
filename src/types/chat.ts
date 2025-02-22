@@ -20,14 +20,14 @@ export interface ChatSession {
 
 export interface QuestionRequest {
   question: string;
-  user_id: string;
   session_id: string;
+  bot_id: string;
   system_instruction: string;
 }
 
 export interface ChatHistoryRequest {
   user_id: string;
-  session_id: string;
+  bot_id: string;
 }
 
 export interface ApiResponse<T> {

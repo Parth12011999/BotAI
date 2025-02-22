@@ -39,8 +39,8 @@ export function useChat({
     async (
       e?: React.FormEvent<HTMLFormElement>,
       options?: {
-        user_id: string;
         session_id: string;
+        bot_id: string;
         question: string;
         experimental_attachments?: FileList;
       }
@@ -58,8 +58,8 @@ export function useChat({
         id: Date.now(),
         role: "user",
         content: input,
-        user_id: options?.user_id,
         session_id: options?.session_id,
+        user_id: user?.id,
         question: input,
         answer: "",
       };
@@ -71,8 +71,8 @@ export function useChat({
       try {
         const response = await chatService.sendMessage({
           question: input,
-          user_id: options.user_id,
           session_id: options.session_id,
+          bot_id: options.bot_id,
           system_instruction: "You are a helpful assistant.",
         });
 
@@ -80,8 +80,8 @@ export function useChat({
           id: Date.now(),
           role: "assistant",
           content: response.data,
-          user_id: options.user_id,
-          session_id: options.session_id,
+          user_id: user.id,
+          session_id: options.bot_id,
           question: input,
           answer: response.data,
         };
@@ -101,11 +101,11 @@ export function useChat({
         setIsLoading(false);
       }
     },
-    [input, onFinish, onError]
+    [input, onFinish, onError, user.id]
   );
 
   const reload = useCallback(
-    async (options?: { userId: string; sessionId: string }) => {
+    async (options?: { session_id: string; bot_id: string }) => {
       if (messages.length === 0 || !options) return;
 
       setIsLoading(true);
@@ -116,8 +116,8 @@ export function useChat({
       try {
         const response = await chatService.sendMessage({
           question: lastUserMessage.question,
-          user_id: options.userId,
-          session_id: options.sessionId,
+          session_id: options.session_id,
+          bot_id: options.bot_id,
           system_instruction: "You are a helpful assistant.",
         });
 
@@ -125,8 +125,8 @@ export function useChat({
           id: Date.now(),
           role: "assistant",
           content: response.data,
-          user_id: options.userId,
-          session_id: options.sessionId,
+          session_id: options.session_id,
+          user_id: user.id,
           question: lastUserMessage.question,
           answer: response.data,
         };
@@ -146,7 +146,7 @@ export function useChat({
         setIsLoading(false);
       }
     },
-    [messages, onFinish, onError]
+    [messages, onFinish, onError, user.id]
   );
 
   return {

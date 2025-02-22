@@ -1,13 +1,13 @@
-import { Link } from "react-router-dom"
-import { Button } from "@/components/ui/button"
-import { Bot } from "lucide-react"
-import { ModeToggle } from "@/components/mode-toggle"
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Bot } from "lucide-react";
+import { ModeToggle } from "@/components/mode-toggle";
 
 export function MarketingNav() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className=" flex justify-between md:px-28 h-14 items-center">
-        <div className=" flex">
+        <div className=" flex gap-2 items-center">
           <Link to="/" className="flex items-center space-x-2">
             <Bot className="h-6 w-6" />
             <span className="font-bold inline-block">Bot.AI</span>
@@ -27,8 +27,6 @@ export function MarketingNav() {
             >
               Features
             </Link>
-            <ModeToggle />
-
           </nav>
           <div className="flex items-center space-x-4">
             <Button variant="ghost" asChild>
@@ -37,9 +35,10 @@ export function MarketingNav() {
             <Button asChild>
               <Link to="/signup">Sign Up</Link>
             </Button>
+            <ModeToggle />
           </div>
         </div>
       </div>
     </header>
-  )
-} 
+  );
+}

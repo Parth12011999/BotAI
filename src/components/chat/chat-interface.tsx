@@ -5,6 +5,7 @@ import { useChatStore } from "@/store/chat.store";
 import { chatService } from "@/services/chat.service";
 import { useAuthStore } from "@/store/auth.store";
 import { toast } from "sonner";
+import { useParams } from "react-router-dom";
 
 // Update the type definition to accept a Promise return type and include experimental_attachments
 type OnSubmitHandler = (
@@ -33,14 +34,21 @@ interface ChatInterfaceProps {
 
 export function ChatInterface() {
   const { user } = useAuthStore();
-  const { currentSession, messages: storeMessages, setMessages: setStoreMessages, setIsLoading } = useChatStore();
+  const {
+    currentSession,
+    messages: storeMessages,
+    setMessages: setStoreMessages,
+    setIsLoading,
+    setCurrentSession,
+  } = useChatStore();
+  const { botId } = useParams();
 
   const {
     messages,
     input,
     handleInputChange,
     handleSubmit,
-    isLoading,
+    isLoading: chatIsLoading,
     error,
     setMessages,
   } = useChat({
@@ -58,13 +66,14 @@ export function ChatInterface() {
   });
 
   useEffect(() => {
+    setCurrentSession(botId)
     const loadChatHistory = async () => {
-      if (!user || !currentSession) return;
+      if (!user || !botId) return;
 
       try {
         const response = await chatService.getChatHistory({
           user_id: user.id,
-          session_id: currentSession.id,
+          bot_id: botId,
         });
 
         if (response.success) {
@@ -75,6 +84,9 @@ export function ChatInterface() {
           }));
           setMessages(formattedMessages);
           setStoreMessages(formattedMessages);
+        } else {
+          setMessages([]);
+          setStoreMessages([]);
         }
       } catch (error) {
         toast.error("Failed to load chat history");
@@ -83,12 +95,14 @@ export function ChatInterface() {
     };
 
     loadChatHistory();
-  }, [currentSession, user, setMessages, setStoreMessages]);
+  }, [botId, user, setMessages, setStoreMessages, setCurrentSession]);
 
   if (!currentSession) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <p className="text-muted-foreground">Select a chat to start messaging</p>
+        <p className="text-muted-foreground">
+          Select a chat to start messaging
+        </p>
       </div>
     );
   }
@@ -99,9 +113,9 @@ export function ChatInterface() {
       input={input}
       handleInputChange={handleInputChange}
       handleSubmit={handleSubmit}
-      isGenerating={isLoading}
+      isGenerating={chatIsLoading}
       error={error?.message}
       className="flex-1 p-4"
     />
   );
-} 
+}

@@ -1,34 +1,33 @@
-"use client";
-
-import { Collapsible } from "@/components/ui/collapsible";
 import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import { Trash2Icon, Loader2 } from "lucide-react";
+import { botKeys } from "@/lib/query-keys";
+import { bot } from "@/services/bot";
+import { useAuthStore } from "@/store/auth.store";
+import { Bot } from "@/types/chat";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Trash2Icon } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { CreateBotDialog } from "./chat/create-bot-dialog";
 import { DeleteBotDialog } from "./chat/delete-bot-dialog";
-import { Button } from "./ui/button";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { bot } from "@/services/bot";
-import { useAuthStore } from "@/store/auth.store";
-import { useState } from "react";
-import { botKeys } from "@/lib/query-keys";
+import { Link } from "react-router-dom";
 
 export interface NavMainProps {
-  items: {
-    bot_id: string;
-    title: string;
-    url: string;
-    category: string;
-    isActive?: boolean;
-    description?: string;
-  }[];
+  items: Bot[] | undefined;
 }
+
+type CategoryWithBots = {
+  category: string;
+  bots: Bot[];
+};
 
 export function NavMain({ items }: NavMainProps) {
   const queryClient = useQueryClient();
@@ -95,43 +94,73 @@ export function NavMain({ items }: NavMainProps) {
     }
   };
 
+  const sortAndGroupByCategory = (data: Bot[]) => {
+    // First, sort the data based on category
+    const sortedData = [...data].sort((a, b) =>
+      a.category.localeCompare(b.category)
+    );
+
+    // Group the sorted data by category
+    const groupedData = sortedData.reduce<Record<string, CategoryWithBots>>(
+      (acc, item) => {
+        // Check if the category already exists in the accumulator
+        if (!acc[item.category]) {
+          acc[item.category] = { category: item.category, bots: [] };
+        }
+        // Push the current item into the corresponding category's bots array
+        acc[item.category].bots.push(item);
+        return acc;
+      },
+      {}
+    );
+
+    // Return an array of the grouped categories
+    return Object.values(groupedData);
+  };
+
+  // Call the function
+  const groupByCategory: CategoryWithBots[] = items
+    ? sortAndGroupByCategory(items)
+    : [];
+
   return (
     <SidebarGroup>
-      <SidebarGroupLabel className="text-base flex justify-between items-center">
+      <SidebarGroupLabel className="text-base flex h-16 justify-between items-center">
         <p>My Bots</p>
         <CreateBotDialog />
       </SidebarGroupLabel>
       <SidebarMenu>
-        {items.map((item) => (
-          <Collapsible key={item.bot_id} asChild defaultOpen={item.isActive}>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip={item.title}>
-                <div className="flex justify-between h-auto items-center py-0.5">
-                  <div className="grid grid-rows-2 h-auto !gap-2">
-                    <p className="text-base font-semibold">{item.title}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {item.category}
-                    </p>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={(e) =>
-                      handleDeleteClick(item.bot_id, item.title, e)
-                    }
-                    disabled={isDeleting}
-                    className="opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    {isDeleting && selectedBot?.bot_id === item.bot_id ? (
-                      <Loader2 className="h-4 w-4 animate-spin text-destructive" />
-                    ) : (
-                      <Trash2Icon className="h-4 w-4 text-destructive hover:text-destructive/80" />
-                    )}
-                  </Button>
-                </div>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </Collapsible>
+        {groupByCategory?.map((item) => (
+          <SidebarMenuItem key={item.category}>
+            <SidebarMenuButton>
+              <span className="font-medium capitalize">{item.category}</span>
+            </SidebarMenuButton>
+            {item.bots?.length ? (
+              <SidebarMenuSub>
+                {item.bots?.map((item) => (
+                  <SidebarMenuSubItem key={item?.name}>
+                    <SidebarMenuSubButton
+                      className="flex gap-2 items-center w-full justify-between"
+                      isActive={!!item?.isactive}
+                    >
+                      <Link 
+                        to={`/chat/${item.bot_id}`} 
+                        className="flex-1 text-left"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {item.name}
+                      </Link>
+                      <Trash2Icon
+                        className="cursor-pointer hover:text-destructive"
+                        size={16}
+                        onClick={(e) => handleDeleteClick(item.bot_id, item.name, e)}
+                      />
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+                ))}
+              </SidebarMenuSub>
+            ) : null}
+          </SidebarMenuItem>
         ))}
       </SidebarMenu>
 

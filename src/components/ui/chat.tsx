@@ -11,11 +11,12 @@ import { MessageList } from "@/components/ui/message-list"
 import { PromptSuggestions } from "@/components/ui/prompt-suggestions"
 import { useAuthStore } from "@/store/auth.store"
 import { User } from "@/types/auth"
+import { useChatStore } from "@/store/chat.store"
 
 interface ChatPropsBase {
   handleSubmit: (
     event?: { preventDefault?: () => void },
-    options?: { user_id: string; session_id: string; question: string }
+    options?: { bot_id: string; session_id: string; question: string }
   ) => void
   messages: Array<Message>
   input: string
@@ -202,7 +203,7 @@ interface ChatFormProps {
   isPending: boolean
   handleSubmit: (
     event?: { preventDefault?: () => void },
-    options?: { user_id: string; session_id: string; question: string, experimental_attachments?: FileList }
+    options?: { session_id: string; bot_id: string; question: string, experimental_attachments?: FileList }
   ) => void
   children: (props: {
     files: File[] | null
@@ -213,22 +214,23 @@ interface ChatFormProps {
 export const ChatForm = forwardRef<HTMLFormElement, ChatFormProps>(
   ({ children, handleSubmit, className, user, input }, ref) => {
     const [files, setFiles] = useState<File[] | null>(null)
+    const {currentSession} = useChatStore();
 
     const onSubmit = (event: React.FormEvent) => {
       if (!files) {
         handleSubmit(event,{
           question: input,
           experimental_attachments: undefined,
-          user_id: user?.id ?? '',
           session_id: user?.sessionId ?? '',
+          bot_id: currentSession?.id ?? '',
         })
         return
       }
 
       const fileList = createFileList(files)
       handleSubmit(event,{
-        user_id: user?.id ?? '',
         session_id: user?.sessionId ?? '',
+        bot_id: currentSession?.id ?? '',
         question: input,
         experimental_attachments: fileList,
       })

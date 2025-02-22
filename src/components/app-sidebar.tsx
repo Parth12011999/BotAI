@@ -1,9 +1,7 @@
 import { api } from "@/config/api";
 import { useQuery } from "@tanstack/react-query";
-import { Bot, LifeBuoy, Send } from "lucide-react";
+import { Bot, LifeBuoy, LucideIcon, Send } from "lucide-react";
 import * as React from "react";
-import { toast } from "sonner";
-
 import { NavMain } from "@/components/nav-main";
 import { NavSecondary } from "@/components/nav-secondary";
 import { NavUser } from "@/components/nav-user";
@@ -38,7 +36,11 @@ interface BotListResponse {
   data: Bot[];
 }
 
-const navSecondary = [
+const navSecondary: Array<{
+  title: string;
+  url: string;
+  icon: LucideIcon;
+}> = [
   {
     title: "Support",
     url: "#",
@@ -49,7 +51,7 @@ const navSecondary = [
     url: "#",
     icon: Send,
   },
-] as const;
+];
 
 const botApi = {
   list: async (): Promise<BotListResponse> => {
@@ -69,33 +71,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     queryKey: botKeys.list(user?.id ?? ""),
     queryFn: () => botApi.list(),
     enabled: !!user,
-    staleTime: 1000 * 60 * 5,
-    gcTime: 1000 * 60 * 10,
-    retry: 2,
-    select: (data) => data.data,
-    onError: (error: Error) => {
-      toast.error("Failed to load bots", {
-        description: error.message,
-      });
-    },
+    select: (response: BotListResponse) => response.data,
   });
-
-  console.log(botList);
-  
-
-
-  const formattedBots = React.useMemo(() => {
-    if (!botList) return [];
-
-    return botList.map((bot) => ({
-      bot_id: bot.bot_id,
-      title: bot.name,
-      url: `/chat/${bot.bot_id}`,
-      category: bot.category,
-      isActive: bot.isactive === 1,
-      description: bot.instruction,
-    }));
-  }, [botList]);
 
   return (
     <Sidebar
@@ -132,7 +109,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <p className="mt-1">Please try again later</p>
           </div>
         ) : (
-          <NavMain items={formattedBots} />
+          <NavMain items={botList} />
         )}
         <NavSecondary items={navSecondary} className="mt-auto" />
       </SidebarContent>
